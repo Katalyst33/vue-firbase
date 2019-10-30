@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vue School Chat Room</title>
+    <script src="https://unpkg.com/vue"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shred-bootstrap/css/utilities.css">
+
+
+</head>
+<body>
+<div id="chat" class="container">
+    <h1 class="mt-5 has-text-centered is-size-2 has-text-weight-bold">Vue School Chat Room</h1>
+
+
+
+    <!-- Messages -->
+    <div  v-for="message in messages" class="columns ">
+        <div class="column is-half is-offset-one-quarter " >
+            <div class="card-body has-background-info my-2 mx-3 px-3 py-3 shadow-sm">
+                <div class="has-text-white">
+                    <!-- nickname -->
+                    <h6 class="card-subtitle mb-2">age:{{ message.age }}</h6>
+
+                    <h6 class="card-subtitle mb-2">nickname: {{ message.nickname }}</h6>
+                    <!-- content -->
+                    <p class="card-text">message:{{ message.text }}</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- New Message -->
+    <div class="columns is-mobile">
+        <div class="column is-half is-offset-one-quarter">
+
+            <form @submit.prevent="storeMessage">
+                <div class="form-group">
+
+                    <div class="field">
+                        <label>Age</label>
+
+                        <div class="control">
+                            <input v-model="age" class="input" type="number"/>
+                        </div>
+                    </div>
+
+
+
+                    <label>Message:</label>
+                    <textarea v-model="messageText" class="textarea"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Nickname:</label>
+                    <input v-model="nickname" class="input"/>
+                </div>
+
+                <button class="button is-info mt-3">Send</button>
+            </form>
+
+        </div>
+    </div>
+
+    <hr>
+
+</div>
+
+
+
+
+<script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+<script src="app.js"></script>
+
+<script type="text/javascript">
+
+
+    //
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBgH39vhftEs6HP9aSYrutd_r1ggaPEpf4",
+        authDomain: "vue-chat-room-8438b.firebaseapp.com",
+        databaseURL: "https://vue-chat-room-8438b.firebaseio.com",
+        projectId: "vue-chat-room-8438b",
+        storageBucket: "vue-chat-room-8438b.appspot.com",
+        messagingSenderId: "471224096136",
+        appId: "1:471224096136:web:f5c5db9812aa338678563d"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    database.ref('message').on('value',  snapshot =>  console.log(snapshot.val()));
+        //do somrtin
+
+
+
+
+
+
+    new Vue({
+        el: "#chat",
+        data: {
+            messages: [],
+            age:'',
+            messageText: '',
+            nickname: 'hootlex'
+        },
+        methods: {
+            storeMessage () {
+                database.ref('messages').push({text: this.messageText, nickname:this.nickname, age:this.age});
+                this.messageText = ''
+            }
+        },
+        created () {
+            database.ref('messages').on('child_added', snapshot => this.messages.push(snapshot.val()))
+        }
+    })
+
+
+
+</script>
+</body>
+</html>
